@@ -18,11 +18,7 @@ exports.getCartByAccount = async (req, res) => {
     console.log("chạy");
     const listCart = await Cart.findAll({
       where: { AccountId: AccountId },
-      include: [
-        { model: Product },
-        // { model: productcolor, as: "colorProducts" },
-        // { model: ProductColorConfig, as: "colorConfigs" },
-      ],
+      include: [{ model: Product }],
     });
     console.log("ok");
     let total_Price = 0;
@@ -163,8 +159,8 @@ exports.deleteCart = async (req, res) => {
         .json({ status: 500, message: "Error connecting to database" });
     }
     return res
-      .status(204)
-      .json({ status: 204, message: "delete successfully" });
+      .status(200)
+      .json({ status: 200, message: "delete successfully" });
   } catch (error) {
     console.log(error);
     return res

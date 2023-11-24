@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const cloudinary = require("cloudinary").v2;
 const {
   Product,
@@ -9,7 +10,20 @@ const {
 } = require("../models");
 exports.getProduct = async (req, res) => {
   try {
-    const listProduct = await Product.findAll();
+    const name = req.query.name;
+    let listProduct;
+    if (name) {
+      listProduct = await Product.findAll({
+        where: {
+          name: {
+            [Op.like]: `%${name}%`, // Using 'like' for a partial match
+          },
+        },
+      });
+    } else {
+      listProduct = await Product.findAll();
+    }
+
     if (listProduct) {
       return res.status(200).json({ status: 200, data: listProduct });
     } else {
@@ -171,7 +185,7 @@ exports.deleteProduct = async (req, res) => {
         .status(400)
         .json({ status: 400, message: "false connexting db" });
     }
-    return res.status(204).json({ status: 204, message: "delete successfuly" });
+    return res.status(200).json({ status: 200, message: "delete successfuly" });
   } catch (error) {
     console.log(error);
     return res

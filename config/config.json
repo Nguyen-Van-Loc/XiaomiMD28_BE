@@ -9,7 +9,7 @@
   "test": {
     "username": "root",
     "password": null,
-    "database": "xiaomi_be_md28",
+    "database": "freedb_xioami_be_md28",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },

@@ -27,11 +27,12 @@ exports.getListOrder = async (req, res) => {
 };
 
 exports.getListOrderInAccountAndStatus = async (req, res) => {
-  const { AccountId, statusOrder } = req.params;
-
+  const { AccountId, status } = req.params;
+  console.log("AccountId:", AccountId);
+  console.log("status:", status);
   try {
     const listOrder = Orders.findAll({
-      where: { AccountId: AccountId, status: statusOrder },
+      where: { AccountId: AccountId, status: status },
     });
     if (!listOrder) {
       return res
@@ -54,21 +55,14 @@ exports.createOrder = async (req, res) => {
     AccountId,
     AddressId,
     PayId,
+    quantity,
     PromotionId,
     productId,
     ProductColorId,
     ProductColorConfigId,
   } = req.body;
   const date = new Date();
-  const order = {
-    message,
-    status: "Chờ Xử Lý",
-    AccountId,
-    AddressId,
-    PayId,
-    PromotionId,
-    total,
-  };
+
   try {
     const account = await Account.findByPk(AccountId);
     const address = await Address.findByPk(AddressId);
@@ -79,12 +73,84 @@ exports.createOrder = async (req, res) => {
     const productColorConfig = await ProductColorConfig.findByPk(
       ProductColorConfigId
     );
+    let totalPrice = 0;
+    console.log(
+      productColorConfig.price * quantity * (1 - promotion.discount / 100)
+    );
     if (!account || !address || !pay || !product) {
       return res.status(404).json({
         status: 404,
-        message: "Account or Address or Pay or Product not found",
+        message:
+          "Account or Address or Pay or Product or productColor or productColorConfig  not found",
       });
     }
+
+    if (ProductColorId && ProductColorConfigId) {
+      if (!productColor || !productColorConfig) {
+        return res.status(404).json({
+          status: 404,
+          message: " productColor or productColorConfig  not found",
+        });
+      }
+      if (PromotionId) {
+        if (!promotion) {
+          return res.status(404).json({
+            status: 404,
+            message: "Promotion not found",
+          });
+        }
+        if (promotion.endDate > date) {
+          return res.status(400).json({
+            status: 400,
+            message: "Promotion expired",
+          });
+        }
+        totalPrice +=
+          productColorConfig.price * quantity * (1 - promotion.discount / 100);
+      } else {
+        totalPrice += productColorConfig.price * quantity;
+      }
+    } else {
+      if (PromotionId) {
+        if (!promotion) {
+          return res.status(404).json({
+            status: 404,
+            message: "Promotion not found",
+          });
+        }
+        if (promotion.endDate > date) {
+          return res.status(400).json({
+            status: 400,
+            message: "Promotion expired",
+          });
+        }
+        totalPrice += product.price * quantity * (1 - promotion.discount / 100);
+      } else {
+        totalPrice += product.price * quantity;
+      }
+    }
+    console.log("Final Total: ", totalPrice);
+    const order = {
+      message,
+      status: 1,
+      AccountId,
+      AddressId,
+      PayId,
+      quantity,
+      productId,
+      total: totalPrice,
+      ProductColorId,
+      ProductColorConfigId,
+    };
+
+    const createOrder = await Orders.create(order);
+    if (!createOrder) {
+      return res.status(400).json({
+        status: 400,
+        message: "fail connecting database",
+      });
+    }
+    return res.status(201).json({ status: 201, data: createOrder });
   } catch (error) {
     console.log(error);
     return res

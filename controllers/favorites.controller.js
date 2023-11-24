@@ -86,5 +86,5 @@ exports.deleteFavorites = async (req, res) => {
   if (!deleteFavorites) {
     return res.status(400).json({ status: 400, message: "Please provide id" });
   }
-  return res.status(204).json({ status: 204, message: "delete successfully" });
+  return res.status(200).json({ status: 200, message: "delete successfully" });
 };

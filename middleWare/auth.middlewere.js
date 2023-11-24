@@ -1,4 +1,4 @@
-const { User } = require("../models/index");
+const { User } = require("../models");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const SIGN_PRIVATE = "xiaomimd28";

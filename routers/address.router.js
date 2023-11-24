@@ -139,8 +139,21 @@
 const express = require("express");
 const router = express.Router();
 const addressController = require("../controllers/address.controller");
-router.get("/address/:AccountId", addressController.getAccountId);
+const authMidleWare = require("../middleWare/auth.middlewere");
+router.get(
+  "/address/:AccountId",
+  //   authMidleWare.apiAuth,
+  addressController.getAccountId
+);
 router.post("/address", addressController.createAddress);
-router.put("/address/:id", addressController.updateAddress);
-router.delete("/address/:id", addressController.deleteAddress);
+router.put(
+  "/address/:id",
+  //   authMidleWare.apiAuth,
+  addressController.updateAddress
+);
+router.delete(
+  "/address/:id",
+  //   authMidleWare.apiAuth,
+  addressController.deleteAddress
+);
 module.exports = router;

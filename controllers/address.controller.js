@@ -1,9 +1,10 @@
-const { Address } = require("../models");
+const { Address, Account } = require("../models");
 
 exports.getAccountId = async (req, res) => {
   const AccountId = req.params.AccountId;
   try {
-    if (!AccountId) {
+    const checkAccount = await Account.findByPk(AccountId);
+    if (!checkAccount) {
       return res.status(404).json({ status: 404, message: "Invalid Account" });
     }
     const account = await Address.findAll({ where: { AccountId: AccountId } });
@@ -23,18 +24,19 @@ exports.getAccountId = async (req, res) => {
 };
 
 exports.createAddress = async (req, res) => {
-  const { province, district, commune, AccountId } = req.body;
+  const { nameReceiver, phoneReceiver, note, address, AccountId } = req.body;
   try {
-    if (!AccountId) {
+    const checkAccount = await Account.findByPk(AccountId);
+    if (!checkAccount) {
       return res.status(404).json({ status: 404, message: "Invalid Account" });
     }
-    if (!province || !district || !commune) {
+    if (!nameReceiver || !phoneReceiver || !address) {
       return res
         .status(400)
         .json({ status: 400, message: "Fields cannot be left blank" });
     }
-    const address = { province, district, commune, AccountId };
-    const createAddress = Address.create(address);
+    const addRess = { nameReceiver, phoneReceiver, note, address, AccountId };
+    const createAddress = Address.create(addRess);
     if (!createAddress) {
       return res
         .status(500)
@@ -50,19 +52,19 @@ exports.createAddress = async (req, res) => {
 };
 
 exports.updateAddress = async (req, res) => {
-  const { province, district, commune, AccountId } = req.body;
+  const { nameReceiver, phoneReceiver, note, address, AccountId } = req.body;
   const id = req.params.id;
   try {
     if (!id) {
       return res.status(404).json({ status: 404, message: "Invalid Address" });
     }
-    const address = { province, district, commune, AccountId };
+    const addRess = { nameReceiver, phoneReceiver, note, address, AccountId };
 
-    const updateAddress = await Address.update(address, { where: { id: id } });
+    const updateAddress = await Address.update(addRess, { where: { id: id } });
     if (!updateAddress) {
       return res
-        .status(500)
-        .json({ status: 500, message: "Error connecting to database" });
+        .status(400)
+        .json({ status: 400, message: "Error connecting to database" });
     }
     return res.status(200).json({ status: 200, data: updateAddress });
   } catch (error) {
@@ -85,5 +87,5 @@ exports.deleteAddress = async (req, res) => {
       .status(500)
       .json({ status: 500, message: "Error connecting to database" });
   }
-  return res.status(204).json({ status: 204, message: "Delete successfuly" });
+  return res.status(200).json({ status: 200, message: "Delete successfully" });
 };

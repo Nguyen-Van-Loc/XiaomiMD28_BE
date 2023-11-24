@@ -1,14 +1,18 @@
 module.exports = (sequelize, DataTypes) => {
   const Address = sequelize.define("Address", {
-    province: {
+    nameReceiver: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    district: {
+    phoneReceiver: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+    },
+    note: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    commune: {
+    address: {
       type: DataTypes.STRING,
       allowNull: false,
     },

@@ -66,8 +66,8 @@ exports.deleteConfig = async (req, res) => {
         .json({ status: 400, message: "Error connecting to database" });
     }
     return res
-      .status(204)
-      .json({ status: 204, message: "Delete successfully" });
+      .status(200)
+      .json({ status: 200, message: "Delete successfully" });
   } catch (error) {
     console.log(error);
     return res

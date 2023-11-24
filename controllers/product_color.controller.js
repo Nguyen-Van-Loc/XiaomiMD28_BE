@@ -86,8 +86,8 @@ exports.deleteProductColor = async (req, res) => {
         .json({ status: 500, message: "Error connecting to database" });
     }
     return res
-      .status(204)
-      .json({ status: 204, message: "Delete Product_Color successfully" });
+      .status(200)
+      .json({ status: 200, message: "Delete Product_Color successfully" });
   } catch (error) {
     console.log(error);
     return res
