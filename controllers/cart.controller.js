@@ -190,7 +190,7 @@ exports.deleteCart = async (req, res) => {
     if (!checkId) {
       return res.status(404).json({ status: 404, message: "Cart not found" });
     }
-    if (userId !== whereId.AccountId) {
+    if (userId !== checkId.AccountId) {
       return res.status(403).json({ status: 403, message: "Forbidden" });
     }
     const deleteCart = await checkId.destroy();
